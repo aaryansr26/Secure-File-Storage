@@ -1,0 +1,14 @@
+import os
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
+f = open("test2", 'r')
+data = f.read()
+f.close()
+datab = data.encode('utf-8')
+aad = b"authenticated but unencrypted data"
+key = ChaCha20Poly1305.generate_key()
+chacha = ChaCha20Poly1305(key)
+nonce = os.urandom(12)
+ce = chacha.encrypt(nonce, datab, aad)
+print(ce)
+cd = chacha.decrypt(nonce, ce, aad)
+print(cd)
