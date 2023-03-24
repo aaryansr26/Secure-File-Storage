@@ -15,6 +15,21 @@ def AESEncrypt(filepath, key , nonce):
     ciphertext = encryptor.encrypt(nonce, content, aad)
     return ciphertext
 
+def ChaChaPolyencrypt(filepath, key, nonce, ce):
+    f = open("test2", 'r')
+    data = f.read()
+    f.close()
+    datab = data.encode('utf-8')
+    aad = b"authenticated but unencrypted data"
+    key = ChaCha20Poly1305.generate_key()
+    chacha = ChaCha20Poly1305(key)
+    nonce = os.urandom(12)
+    ce = chacha.encrypt(nonce, datab, aad)
+    print(ce)
+    cd = chacha.decrypt(nonce, ce, aad)
+    print(cd)
+
+
 def FernetEncrypt(filepath, key):
     f = open(filepath, "r")
     content = f.read()
