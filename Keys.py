@@ -8,5 +8,5 @@ ChaChaPolyKey = ChaCha20Poly1305.generate_key()
 FernetKey = Fernet.generate_key()
 MultiFernetK1 = Fernet.generate_key()
 MultiFernetK2 = Fernet.generate_key()
-AESnonce = os.urandom(12)
-key_list = [AESGCMKey, ChaChaPolyKey, FernetKey, MultiFernetK1, MultiFernetK2, AESnonce]
+nonce_12 = os.urandom(12)
+key_list = [AESGCMKey, ChaChaPolyKey, FernetKey, MultiFernetK1, MultiFernetK2, nonce_12]

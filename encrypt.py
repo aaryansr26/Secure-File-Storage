@@ -3,33 +3,33 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 from cryptography.fernet import Fernet
 from file import window_input, openFile, openFiles
-from Keys import*
+from Keys import * 
 
 
+
+# AES Encryption 
 def AESEncrypt(filepath, key , nonce):
     aad = b'authenticated but unencrypted'
     f = open(filepath, "r")
     content = f.read()
+    f.close()
     content = content.encode('utf-8')
     encryptor = AESGCM(key)
     ciphertext = encryptor.encrypt(nonce, content, aad)
     return ciphertext
 
-def ChaChaPolyencrypt(filepath, key, nonce, ce):
-    f = open("test2", 'r')
+# ChaChaPoly Encryption
+def ChaChaPolyencrypt(filepath, key, nonce):
+    f = open(filepath, 'r')
     data = f.read()
     f.close()
-    datab = data.encode('utf-8')
+    data = data.encode('utf-8')
     aad = b"authenticated but unencrypted data"
-    key = ChaCha20Poly1305.generate_key()
-    chacha = ChaCha20Poly1305(key)
-    nonce = os.urandom(12)
-    ce = chacha.encrypt(nonce, datab, aad)
-    print(ce)
-    cd = chacha.decrypt(nonce, ce, aad)
-    print(cd)
+    encryptor = ChaCha20Poly1305(key)
+    ciphertext = encryptor.encrypt(nonce, data, aad)
+    return ciphertext
 
-
+# Fernet Encryption
 def FernetEncrypt(filepath, key):
     f = open(filepath, "r")
     content = f.read()
@@ -37,32 +37,56 @@ def FernetEncrypt(filepath, key):
     f = Fernet(key)
     ciphertext = f.encrypt(content)
     return ciphertext
-    
-    
+
+# File Creation 
+def fileCreate(ciphertext, category):
+    if not os.path.exists("EncryptedFiles"):
+        os.mkdir("EncryptedFiles")
+        if category == "AES":
+            with open("EncryptedFiles/AES.txt", "wb") as f:
+                f.write(ciphertext)
+        elif category == "ChaChaPoly":
+            with open("EncryptedFiles/ChaChaPoly.txt", "wb") as f:
+                f.write(ciphertext)
+        elif category == "Fernet":
+            with open("EncryptedFiles/Fernet.txt", "wb") as f:
+                f.write(ciphertext)
+    else: 
+        if category == "AES":
+            with open("EncryptedFiles/AES.txt", "wb") as f:
+                f.write(ciphertext)
+        elif category == "ChaChaPoly":
+            with open("EncryptedFiles/ChaChaPoly.txt", "wb") as f:
+                f.write(ciphertext)
+        elif category == "Fernet":
+            with open("EncryptedFiles/Fernet.txt", "wb") as f:
+                f.write(ciphertext)
+        
+# Generate Keys 
 def generateKeys():
     f = open("EncryptedKeys.txt","w")    
     for key in key_list:
         f.write("{} \n".format(key))
 
+# Encryption Function
 def encryption():
     filepath = openFile()
-    AESct = AESEncrypt(filepath,key = AESGCMKey , nonce= AESnonce)
-    f = open("AESenc.txt", "wb")
-    f.write(AESct)
+    AESct = AESEncrypt(filepath,key = AESGCMKey , nonce= nonce_12)
+    ChaChact = ChaChaPolyencrypt(filepath, key = ChaChaPolyKey, nonce = nonce_12) 
+    Fernetct = FernetEncrypt(filepath, key = FernetKey) 
+    fileCreate(AESct, "AES")
+    fileCreate(ChaChact, "ChaChaPoly")
+    fileCreate(Fernetct, "Fernet")
+    print("Encryption Successful!")
+    listdir = os.listdir("EncryptedFiles")
+    for file in listdir: 
+        with open("EncryptedFiles/" + file, "rb") as f:
+            print(f.read())
+    
+    print("{} \n {} \n {}".format(AESct, ChaChact, Fernetct))
+    
 
 def main():
-    # key, iv , aad = AESalgo() 
-    # encryptFile(key, iv, aad)
-    
-    # print("Choose your encryption, bitches!")
-    # print("1 - AESGCM \n 2 - Fernet \n 3 - SEED \n 4 - CAMELLIA")
-    # choice = int(input())
-    # if(choice == 1):
-    #     key, iv, aad = AESalgo()
-    #     encryptGCM(key,iv,aad)
-    # if(choice==2):
-    #     key = FernetEnc()
-    #     encryptFernet(key)    
     generateKeys()
     encryption()
     
