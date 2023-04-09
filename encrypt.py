@@ -76,14 +76,13 @@ def encryption():
     Fernetct = FernetEncrypt(filepath, key = FernetKey) 
     fileCreate(AESct, "AES")
     fileCreate(ChaChact, "ChaChaPoly")
-    fileCreate(Fernetct, "Fernet")
+    fileCreate(Fernetct, "Fernet")  
     print("Encryption Successful!")
     listdir = os.listdir("EncryptedFiles")
     for file in listdir: 
         with open("EncryptedFiles/" + file, "rb") as f:
             print(f.read())
     
-    print("{} \n {} \n {}".format(AESct, ChaChact, Fernetct))
     
 
 def main():
