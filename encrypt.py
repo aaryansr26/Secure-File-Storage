@@ -1,96 +1,100 @@
 import os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 from file import window_input, openFile, openFiles
+from processing import split
 from Keys import * 
 
 
-
 # AES Encryption 
-def AESEncrypt(filepath, key , nonce):
+def AESencrypt(key, nonce):
     aad = b'authenticated but unencrypted'
-    f = open(filepath, "r")
+    path = os.path.join(os.getcwd() + "/SplitFiles", "0.txt")
+    f = open(path, "r")
     content = f.read()
     f.close()
+    os.remove(path)
     content = content.encode('utf-8')
     encryptor = AESGCM(key)
     ciphertext = encryptor.encrypt(nonce, content, aad)
-    return ciphertext
+    # print(ciphertext)
+    # print('-' * 30)
+    f = open(os.path.join(os.getcwd() + "/EncryptedFiles" , "0.txt"), "wb")
+    f.write(ciphertext)
+    f.close()
+
 
 # ChaChaPoly Encryption
-def ChaChaPolyencrypt(filepath, key, nonce):
-    f = open(filepath, 'r')
+def ChaChaPolyencrypt(key, nonce):
+    path = os.path.join(os.getcwd() + "/SplitFiles" , "1.txt")
+    f = open(path, 'r')
     data = f.read()
     f.close()
+    os.remove(path)
     data = data.encode('utf-8')
     aad = b"authenticated but unencrypted data"
     encryptor = ChaCha20Poly1305(key)
     ciphertext = encryptor.encrypt(nonce, data, aad)
-    return ciphertext
+    # print(ciphertext)
+    # print('-' * 100)
+    f = open(os.path.join(os.getcwd() + "/EncryptedFiles" , "1.txt"), "wb")
+    f.write(ciphertext)
+    f.close()
 
 # Fernet Encryption
-def FernetEncrypt(filepath, key):
-    f = open(filepath, "r")
+def FernetEncrypt(key):
+    path = os.path.join(os.getcwd() + "/SplitFiles", "2.txt")
+    f = open(path, "r")
     content = f.read()
+    f.close()
+    os.remove(path)
     content = content.encode('utf-8')
-    f = Fernet(key)
-    ciphertext = f.encrypt(content)
-    return ciphertext
+    encryptor = Fernet(key)
+    ciphertext = encryptor.encrypt(content)
+    f = open(os.path.join(os.getcwd() + "/EncryptedFiles" , "2.txt"), "wb")
+    f.write(ciphertext)
+    f.close()
+         
+# MultiFernet Encryption
+def MultiFernetEncrypt(key1, key2): 
+    path = os.path.join(os.getcwd() + "/SplitFiles", "3.txt")
+    f = open(path, "r")
+    content = f.read()
+    f.close()
+    os.remove(path)
+    content = content.encode('utf-8')
+    k1 = Fernet(key1)
+    k2 = Fernet(key2)
+    encryptor = MultiFernet([k1, k2])
+    ciphertext = encryptor.encrypt(content)
+    f = open(os.path.join(os.getcwd() + "/EncryptedFiles" , "3.txt"), "wb")
+    f.write(ciphertext)
+    f.close()
 
-# File Creation 
-def fileCreate(ciphertext, category):
-    if not os.path.exists("EncryptedFiles"):
-        os.mkdir("EncryptedFiles")
-        if category == "AES":
-            with open("EncryptedFiles/AES.txt", "wb") as f:
-                f.write(ciphertext)
-        elif category == "ChaChaPoly":
-            with open("EncryptedFiles/ChaChaPoly.txt", "wb") as f:
-                f.write(ciphertext)
-        elif category == "Fernet":
-            with open("EncryptedFiles/Fernet.txt", "wb") as f:
-                f.write(ciphertext)
-    else: 
-        if category == "AES":
-            with open("EncryptedFiles/AES.txt", "wb") as f:
-                f.write(ciphertext)
-        elif category == "ChaChaPoly":
-            with open("EncryptedFiles/ChaChaPoly.txt", "wb") as f:
-                f.write(ciphertext)
-        elif category == "Fernet":
-            with open("EncryptedFiles/Fernet.txt", "wb") as f:
-                f.write(ciphertext)
-        
 # Generate Keys 
 def generateKeys():
-    f = open("EncryptedKeys.txt","w")    
+    f = open("EncryptedKeys.txt","w") 
     for key in key_list:
         f.write("{} \n".format(key))
-
-# Encryption Function
-def encryption():
-    filepath = openFile()
-    AESct = AESEncrypt(filepath,key = AESGCMKey , nonce= nonce_12)
-    ChaChact = ChaChaPolyencrypt(filepath, key = ChaChaPolyKey, nonce = nonce_12) 
-    Fernetct = FernetEncrypt(filepath, key = FernetKey) 
-    fileCreate(AESct, "AES")
-    fileCreate(ChaChact, "ChaChaPoly")
-    fileCreate(Fernetct, "Fernet")  
-    print("Encryption Successful!")
-    listdir = os.listdir("EncryptedFiles")
-    for file in listdir: 
-        with open("EncryptedFiles/" + file, "rb") as f:
-            print(f.read())
+        
+def fernet_media(key, path):
+    f = open(path, 'rb')
+    content = f.read()
+    f.close()
+    print(content)
+    encryptor = Fernet(key)
+    cipher = encryptor.encrypt(content)
+    print(cipher)
+    f = open(os.path.join(os.getcwd() + "/EncryptedFiles", "media_encryption.txt"), "wb")
+    f.write(cipher)
+    f.close()
     
-    
-
-def main():
-    generateKeys()
-    encryption()
-    
-main()
-
-    
+# def encryption_main():
+#     path = openFile()
+#     if(file_checker.is_media_file(path)):
+#         fernet_media(FernetKey, path)
+#     print("File encrypted successfully!")
 
 
+        
