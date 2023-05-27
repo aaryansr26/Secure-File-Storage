@@ -4,8 +4,9 @@ from encrypt import *
 from decrypt import *
 from file_checker import *
 from threads import *
-import glob
 import time 
+import glob
+from config import *
   
 def count_file(path):
     pattern  = path + "/*"
@@ -16,6 +17,7 @@ def count_file(path):
     
 
 def main(): 
+    config()
     generateKeys()
     path = openFile()
     [checker, extension] = is_media_file(path)
