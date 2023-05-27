@@ -10,7 +10,7 @@ def is_media_file(file_path):
     file_extension = file_path.split('.')[1]
     print(file_extension)
     if file_extension in media_extensions:
-        return True
+        return [True, file_extension]
     else: 
         return False
 

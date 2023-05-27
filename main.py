@@ -18,8 +18,10 @@ def count_file(path):
 def main(): 
     generateKeys()
     path = openFile()
-    if(is_media_file(path)):
+    [checker, extension] = is_media_file(path)
+    if(checker):
         fernet_media(FernetKey, path)
+        time.sleep(5)
     else:
         split(path)
         time.sleep(5)
@@ -29,7 +31,7 @@ def main():
     if choice == 'y':
         count = count_file(os.path.join(os.getcwd() + '/EncryptedFiles'))
         if(count == 1):
-            fernet_media_decrypt(FernetKey)
+            fernet_media_decrypt(FernetKey, extension)
         else:
             AESdecrypt(AESGCMKey, nonce_12)
             ChaChadecrypt(ChaChaPolyKey, nonce_12)

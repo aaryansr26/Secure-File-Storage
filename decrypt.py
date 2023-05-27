@@ -54,7 +54,7 @@ def MultiFernetDecrypt(key1, key2):
     f.write(plaintext.decode())
     f.close()
     
-def fernet_media_decrypt(key):
+def fernet_media_decrypt(key, extension):
     path = os.path.join(os.getcwd() + "/EncryptedFiles", "media_encryption.txt")
     f = open(path, "rb")
     cipher = f.read()
@@ -62,7 +62,7 @@ def fernet_media_decrypt(key):
     f.close()
     decryptor = Fernet(key)
     plaintext = decryptor.decrypt(cipher)
-    f = open('Output.jpg', "wb")
+    f = open("Output" + "." + extension, "wb")
     f.write(plaintext)
     f.close()
     
