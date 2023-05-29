@@ -4,9 +4,10 @@ from encrypt import *
 from decrypt import *
 from file_checker import *
 from threads import *
-import time 
+# import time 
 import glob
 from config import *
+from aws_config import * 
   
 def count_file(path):
     pattern  = path + "/*"
@@ -23,16 +24,18 @@ def main():
     [checker, extension] = is_media_file(path)
     if(checker):
         fernet_media(FernetKey, path)
-        time.sleep(5)
+        s3_upload()
+        
     else:
         split(path)
-        time.sleep(5)
         HybridCrypt()
+        s3_upload()
 
     choice = input("Do you want to decode?")
     if choice == 'y':
+        s3_download()
         count = count_file(os.path.join(os.getcwd() + '/EncryptedFiles'))
-        if(count == 1):
+        if(count <= 1):
             fernet_media_decrypt(FernetKey, extension)
         else:
             AESdecrypt(AESGCMKey, nonce_12)

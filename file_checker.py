@@ -7,7 +7,4 @@ def is_media_file(file_path):
     else: 
         return [False, None]
 
-
-    
-
     
