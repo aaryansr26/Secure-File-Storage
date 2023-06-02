@@ -1,5 +1,6 @@
 EncryptedKeys.txt
-EncryptedFiles/ 
 __pycache__/ 
 env/
 env/lib/
+Output.txt
+config.json

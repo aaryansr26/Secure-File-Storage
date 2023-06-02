@@ -1,5 +1,6 @@
 import os
 import boto3
+import json
 
 
 def config():
@@ -19,8 +20,11 @@ def config():
     print(f'Configuration Complete!')
     
 def s3_config():
-    aws_access_key_id = ''
-    aws_secret_key = ''
+    with open('./config.json') as f:
+        config = json.load(f)
+        
+    aws_access_key_id = config['aws_access_key']
+    aws_secret_key = config['aws_secret']
 
 
     s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_key)
